@@ -159,6 +159,52 @@ def calculate_weight(bet, wager_time):
 
 <!-- end_slide -->
 
+Installing Git
+===
+
+## Required to download the project
+
+<!-- pause -->
+
+**Mac:**
+```bash
+xcode-select --install
+# or: brew install git
+```
+
+<!-- pause -->
+
+**Windows:**
+
+Download from `https://git-scm.com/download/win`
+
+Run installer, accept defaults, restart terminal.
+
+<!-- end_slide -->
+
+Clone the Project
+===
+
+## Get the code from GitHub
+
+<!-- pause -->
+
+```bash
+cd ~/Documents
+git clone https://github.com/MirusTech/office-betting.git
+cd office-betting
+```
+
+<!-- pause -->
+
+**Verify:**
+```bash
+ls
+# backend/  frontend/  docker-compose.yml  ...
+```
+
+<!-- end_slide -->
+
 Running Locally
 ===
 
