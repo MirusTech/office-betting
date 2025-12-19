@@ -2,9 +2,20 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer, field_validator
 
 from mirustech.betting.models.bet import BetStatus
+
+
+class UTCDatetimeMixin:
+    """Mixin to serialize naive datetimes as UTC with Z suffix."""
+
+    @field_serializer("close_time", "created_at", check_fields=False)
+    def serialize_datetime(self, dt: datetime) -> str:
+        """Serialize datetime as ISO format with Z suffix to indicate UTC."""
+        if dt is None:
+            return None
+        return dt.isoformat() + "Z"
 
 
 class OutcomeCreate(BaseModel):
@@ -20,6 +31,16 @@ class BetCreate(BaseModel):
     description: str = Field(default="", max_length=2000)
     outcomes: list[OutcomeCreate] = Field(..., min_length=2)
     close_time: datetime
+
+    @field_validator("close_time")
+    @classmethod
+    def normalize_close_time(cls, v: datetime) -> datetime:
+        """Convert timezone-aware datetime to naive UTC for SQLite compatibility."""
+        if v.tzinfo is not None:
+            # Convert to UTC and strip timezone info
+            from datetime import UTC
+            v = v.astimezone(UTC).replace(tzinfo=None)
+        return v
 
 
 class OutcomeResponse(BaseModel):
@@ -44,7 +65,7 @@ class OutcomeWithOdds(BaseModel):
     payout_multiplier: float
 
 
-class BetListResponse(BaseModel):
+class BetListResponse(UTCDatetimeMixin, BaseModel):
     """Schema for bet in list view."""
 
     id: int
@@ -61,7 +82,7 @@ class BetListResponse(BaseModel):
         from_attributes = True
 
 
-class BetDetailResponse(BaseModel):
+class BetDetailResponse(UTCDatetimeMixin, BaseModel):
     """Schema for detailed bet view with outcomes and odds."""
 
     id: int
