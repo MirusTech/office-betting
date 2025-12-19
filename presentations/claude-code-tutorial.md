@@ -924,6 +924,134 @@ Quick Reference Card
 
 <!-- end_slide -->
 
+Installing Git
+===
+
+## You need Git to work with code repositories
+
+<!-- pause -->
+
+## Mac Installation
+
+**Option 1:** Install Xcode Command Line Tools
+```bash
+xcode-select --install
+```
+
+**Option 2:** Using Homebrew
+```bash
+brew install git
+```
+
+<!-- pause -->
+
+## Windows Installation
+
+1. Download from `https://git-scm.com/download/win`
+2. Run the installer
+3. Accept default settings (click Next through all steps)
+4. Restart your terminal
+
+<!-- end_slide -->
+
+Verify Git Installation
+===
+
+## Check that Git is working
+
+```bash
+git --version
+```
+
+<!-- pause -->
+
+You should see something like:
+
+```
+git version 2.43.0
+```
+
+<!-- pause -->
+
+## Configure your identity (first time only)
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+<!-- end_slide -->
+
+Try the Demo Project
+===
+
+## Clone the Office Betting demo
+
+<!-- pause -->
+
+**1. Open your terminal and navigate to a folder**
+
+```bash
+cd ~/Documents
+```
+
+<!-- pause -->
+
+**2. Clone the repository**
+
+```bash
+git clone https://github.com/MirusTech/office-betting.git
+```
+
+<!-- pause -->
+
+**3. Enter the project folder**
+
+```bash
+cd office-betting
+```
+
+<!-- end_slide -->
+
+Running the Demo
+===
+
+## Start the application
+
+<!-- pause -->
+
+**Backend (first terminal):**
+
+```bash
+cd backend
+uv venv && uv pip install -e .
+source .venv/bin/activate   # Mac/Linux
+python -m mirustech.betting.seed
+uvicorn mirustech.betting.main:app --port 8000
+```
+
+<!-- pause -->
+
+**Frontend (second terminal):**
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+<!-- pause -->
+
+## Open in browser
+
+```
+http://localhost:5173
+```
+
+Demo login: `demo` / `demo`
+
+<!-- end_slide -->
+
 Practice Exercise
 ===
 
