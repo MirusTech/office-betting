@@ -1,7 +1,7 @@
 """Bet model for tracking betting events."""
 
 import enum
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey, String, Text
@@ -34,7 +34,7 @@ class Bet(Base):
     close_time: Mapped[datetime] = mapped_column()
     status: Mapped[BetStatus] = mapped_column(Enum(BetStatus), default=BetStatus.OPEN)
     winning_outcome_id: Mapped[int | None] = mapped_column(ForeignKey("outcomes.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC).replace(tzinfo=None))
 
     # Relationships
     creator: Mapped["User"] = relationship(back_populates="bets_created")
@@ -46,7 +46,7 @@ class Bet(Base):
     @property
     def is_open(self) -> bool:
         """Check if the bet is still accepting wagers."""
-        return self.status == BetStatus.OPEN and datetime.utcnow() < self.close_time
+        return self.status == BetStatus.OPEN and datetime.now(UTC).replace(tzinfo=None) < self.close_time
 
     @property
     def total_pool(self) -> float:

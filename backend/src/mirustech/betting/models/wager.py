@@ -1,6 +1,6 @@
 """Wager model for tracking individual bets placed by users."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
@@ -24,7 +24,7 @@ class Wager(Base):
     amount: Mapped[int] = mapped_column()  # Amount in OfficeCoins
     weight: Mapped[float] = mapped_column(default=1.0)  # 1.0 or 1.2 for early bets
     payout: Mapped[float | None] = mapped_column(nullable=True)  # Set after resolution
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC).replace(tzinfo=None))
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="wagers")

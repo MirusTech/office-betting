@@ -1,6 +1,6 @@
 """Betting service with pari-mutuel odds calculation."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -20,7 +20,7 @@ class BettingService:
 
     async def create_bet(self, user: User, data: BetCreate) -> Bet:
         """Create a new bet with outcomes."""
-        if data.close_time <= datetime.utcnow():
+        if data.close_time <= datetime.now(UTC).replace(tzinfo=None):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Close time must be in the future",
@@ -115,7 +115,7 @@ class BettingService:
 
     def _calculate_weight(self, bet: Bet) -> float:
         """Calculate the weight multiplier for early bets."""
-        now = datetime.utcnow()
+        now = datetime.now(UTC).replace(tzinfo=None)
         total_window = (bet.close_time - bet.created_at).total_seconds()
         elapsed = (now - bet.created_at).total_seconds()
 
@@ -172,7 +172,7 @@ class BettingService:
         outcomes_with_odds = self.calculate_odds(bet)
 
         # Calculate if we're still in the early betting window
-        now = datetime.utcnow()
+        now = datetime.now(UTC).replace(tzinfo=None)
         total_window = (bet.close_time - bet.created_at).total_seconds()
         elapsed = (now - bet.created_at).total_seconds()
         is_early_betting = elapsed < total_window / 2 and bet.is_open

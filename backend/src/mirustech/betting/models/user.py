@@ -1,6 +1,6 @@
 """User model for authentication and balance tracking."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import String
@@ -22,7 +22,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     balance: Mapped[int] = mapped_column(default=1000)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC).replace(tzinfo=None))
 
     # Relationships
     bets_created: Mapped[list["Bet"]] = relationship(back_populates="creator")

@@ -81,12 +81,12 @@ class PayoutService:
 
     async def close_expired_bets(self) -> int:
         """Close all bets that have passed their close time."""
-        from datetime import datetime
+        from datetime import UTC, datetime
 
         result = await self.db.execute(
             select(Bet).where(
                 Bet.status == BetStatus.OPEN,
-                Bet.close_time <= datetime.utcnow(),
+                Bet.close_time <= datetime.now(UTC).replace(tzinfo=None),
             )
         )
         bets = result.scalars().all()
