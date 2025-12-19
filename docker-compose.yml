@@ -1,0 +1,39 @@
+services:
+  backend:
+    build: ./backend
+    container_name: betting-backend
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - BETTING_DATABASE_URL=sqlite+aiosqlite:///./data/betting.db
+      - BETTING_JWT_SECRET_KEY=change-this-in-production-use-a-long-random-string
+      - BETTING_DEBUG=false
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    container_name: betting-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # Seed data runner (runs once then exits)
+  seed:
+    build: ./backend
+    container_name: betting-seed
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - BETTING_DATABASE_URL=sqlite+aiosqlite:///./data/betting.db
+    command: python -m mirustech.betting.seed
+    depends_on:
+      backend:
+        condition: service_healthy
